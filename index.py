@@ -3,6 +3,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import mean_absolute_error
 from sklearn.tree import DecisionTreeRegressor
+import csv
 import numpy as np
 import sys
 import os
@@ -10,7 +11,7 @@ import os
 columns = ['PassengerId', 'Survived', 'Pclass', 'Name', 'Sex', 'Age', 'SibSp', 'Parch', 'Ticket', 'Fare', 'Cabin', 'Embarked']
 
 # Preparing the data.
-trainData = pd.read_csv("./data/train.csv", sep=',', quotechar="\"")
+trainData = pd.read_csv("./data/train.csv", sep=',')
 
 df = pd.DataFrame(trainData, columns = columns)
 
