@@ -3,6 +3,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import mean_absolute_error
 from sklearn.tree import DecisionTreeRegressor
+from sklearn import preprocessing
 import csv
 import numpy as np
 import sys
@@ -12,11 +13,14 @@ columns = ['PassengerId', 'Survived', 'Pclass', 'Name', 'Sex', 'Age', 'SibSp', '
 
 # Preparing the data.
 trainData = pd.read_csv("./data/train.csv", sep=',')
-
 df = pd.DataFrame(trainData, columns = columns)
 
-y = trainData.Survived
-x = trainData[columns]
+le = preprocessing.LabelEncoder()
+for i in columns:
+     df[i] = le.fit_transform(df[i].astype('str'))
+
+y = df.Survived
+x = df[columns]
 
 train_x, val_x, train_y, val_y = train_test_split(x, y, random_state=1)
 
