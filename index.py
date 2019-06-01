@@ -10,33 +10,46 @@ import sys
 import os
 
 columns = ['PassengerId', 'Survived', 'Pclass', 'Name', 'Sex', 'Age', 'SibSp', 'Parch', 'Ticket', 'Fare', 'Cabin', 'Embarked']
+columns1 = ['PassengerId', 'Pclass', 'Name', 'Sex', 'Age', 'SibSp', 'Parch', 'Ticket', 'Fare', 'Cabin', 'Embarked']
 
-# Preparing the data.
+# Preparing the data for Train and Test.
 trainData = pd.read_csv("./data/train.csv", sep=',')
-df = pd.DataFrame(trainData, columns = columns)
+dfTrain = pd.DataFrame(trainData, columns = columns)
 
+testData = pd.read_csv("./data/test.csv", sep=',')
+dfTest = pd.DataFrame(testData, columns = columns1)
+
+# Encoding for the Train and Test data.
 le = preprocessing.LabelEncoder()
 for i in columns:
-     df[i] = le.fit_transform(df[i].astype('str'))
+     dfTrain[i] = le.fit_transform(dfTrain[i].astype('str'))
 
-y = df.Survived
-x = df[columns]
+for i in columns1:
+     dfTest[i] = le.fit_transform(dfTest[i].astype('str'))
 
-train_x, val_x, train_y, val_y = train_test_split(x, y, random_state=1)
+y = dfTrain.Survived
+x = dfTrain[columns]
 
-# Creating and testing the model.
+val_xT = dfTest[columns1]
+
+train_x, val_x, train_x, val_y = train_test_split(x, y, random_state=1)
+
+# Create and predicts with the model.
 model1 = DecisionTreeRegressor(random_state=1)
-model2 = RandomForestClassifier(random_state=1)
+model1.fit(val_x, val_y)
 
-model1.fit(train_x, train_y)
-model2.fit(train_x, train_y)
-
-# Test with the final test.csv
-validation_pre = model1.predict(val_x)
-validation_mae = mean_absolute_error(validation_pre, val_y)
-
-print(validation_mae)
+prediction = model1.predict(val_xT)
 
 # Print the output:
+output = pd.DataFrame({"PassengerId":  dfTest.PassengerId, "Survived": prediction})
+output.to_csv("./data/test.csv", sep=',', index=False)
 
 
+""" ----> CODE TO VALIDATE THE MODEL <----
+validation_pre1 = model1.predict(val_x)
+print(val_x)
+validation_mae1 = mean_absolute_error(validation_pre1, val_y)
+
+validation_pre2 = model2.predict(val_x)
+validation_mae2 = mean_absolute_error(validation_pre2, val_y)
+"""
